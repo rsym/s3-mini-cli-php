@@ -91,13 +91,12 @@ function main()
   );
   $args = getopt(null, $longopts);
 
-  if ( !$args['usage'] )
+  if ( isset($args['usage']) )
   {
     usage();
     exit;
   }
 
-  $usage       = $args['usage'];
   $api         = $args['api'];
   $bucket      = $args['bucket'];
   $region      = $args['region'] ?: 'us-east-1';
