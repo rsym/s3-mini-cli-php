@@ -5,12 +5,14 @@ use Aws\S3\S3Client;
 main();
 
 
-function GetObject($s3client, $bucket, $key)
+// https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-s3-2006-03-01.html#getobject
+function GetObject($s3client, $bucket, $key, $save_as)
 {
   try { 
     $result = $s3client->getObject([
       'Bucket' => $bucket,
       'Key'    => $key,
+      'SaveAs' => $save_as,
     ]);
   } catch (S3Exception $e) {
     echo $e->getMessage() . PHP_EOL;
@@ -60,6 +62,7 @@ function main()
     "region:",
     "endpoint:",
     "key:",
+    "save_as:",
     "source_file:",
     "copy_source:",
   );
@@ -71,6 +74,7 @@ function main()
   $region      = $args['region'] ?: 'us-east-1';
   $endpoint    = $args['endpoint'] ?: 'https://s3.amazonaws.com/';
   $key         = $args['key'];
+  $save_as     = $args['save_as'];
   $source_file = $args['source_file'];
   $copy_source = $args['copy_source'];
   
@@ -94,7 +98,7 @@ function main()
   switch($api)
   {
     case "GetObject":
-      $result = GetObject($s3client, $bucket, $key);
+      $result = GetObject($s3client, $bucket, $key, $save_as);
       break;
 
     case "PutObject":

@@ -41,5 +41,5 @@ AWS_SECRET_ACCESS_KEY='***********************'
 #### GetObjectの実行例
 
 ```
-php s3-mini-cli.php --api GetObject --endpoint https://end.point.url/ --bucket bucket_name --key path/to/key
+php s3-mini-cli.php --api GetObject --endpoint https://end.point.url/ --bucket bucket_name --key path/to/key --save_as /path/to/download
 ```
