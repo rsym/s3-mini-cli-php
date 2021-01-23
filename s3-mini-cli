@@ -1,0 +1,2 @@
+#!/bin/sh
+php ./src/s3-mini-cli.php "$@"
