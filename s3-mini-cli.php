@@ -4,55 +4,79 @@ use Aws\S3\S3Client;
 
 main();
 
-
-// https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-s3-2006-03-01.html#getobject
-function GetObject($s3client, $bucket, $key, $save_as)
+class S3API
 {
-  try { 
-    $result = $s3client->getObject([
-      'Bucket' => $bucket,
-      'Key'    => $key,
-      'SaveAs' => $save_as,
-    ]);
-  } catch (S3Exception $e) {
-    echo $e->getMessage() . PHP_EOL;
+  private $s3client;
+
+  public function __construct($aws_access_key_id, $aws_secret_access_key, $region, $endpoint)
+  {
+    $options = [
+        'credentials' => [
+            'key'    => $aws_access_key_id,
+            'secret' => $aws_secret_access_key,
+        ],
+        'region'   => $region,
+        'endpoint' => $endpoint,
+        'version'  => 'latest',
+    ];
+
+    // S3Clientを実行するとこんなWarningが3回くらい流れるので意図的に抑止
+    // Warning: syntax error, unexpected '(' in Unknown on line 6
+    // in /path/to/s3-mini-cli-php/vendor/aws/aws-sdk-php/src/functions.php on line 461
+    error_reporting(0);
+    $this->$s3client = new S3Client($options);
+    error_reporting(1);
+
+    return;
   }
 
-  return $result;
-}
+  // https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-s3-2006-03-01.html#getobject
+  public function GetObject($bucket, $key, $api_parameters)
+  {
+    try {
+      $result = $this->$s3client->getObject([
+        'Bucket' => $bucket,
+        'Key'    => $key,
+        'SaveAs' => $api_parameters['SaveAs'],
+      ]);
+    } catch (S3Exception $e) {
+      echo $e->getMessage() . PHP_EOL;
+    }
 
-
-// https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-s3-2006-03-01.html#putobject
-function PutObject($s3client, $acl, $bucket, $key, $source_file)
-{
-  try { 
-    $result = $s3client->putObject([
-      'ACL'        => $acl,
-      'Bucket'     => $bucket,
-      'Key'        => $key,
-      'SourceFile' => $source_file,
-    ]);
-  } catch (S3Exception $e) {
-    echo $e->getMessage() . PHP_EOL;
+    return $result;
   }
 
-  return $result;
-}
+  // https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-s3-2006-03-01.html#putobject
+  public function PutObject($bucket, $key, $api_parameters)
+  {
+    try {
+      $result = $this->$s3client->putObject([
+        'ACL'        => $api_parameters['ACL'],
+        'Bucket'     => $bucket,
+        'Key'        => $key,
+        'SourceFile' => $api_parameters['SourceFile'],
+      ]);
+    } catch (S3Exception $e) {
+      echo $e->getMessage() . PHP_EOL;
+    }
 
-
-// https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-s3-2006-03-01.html#deleteobject
-function DeleteObject($s3client, $bucket, $key)
-{
-  try { 
-    $result = $s3client->deleteObject([
-      'Bucket' => $bucket,
-      'Key'    => $key,
-    ]);
-  } catch (S3Exception $e) {
-    echo $e->getMessage() . PHP_EOL;
+    return $result;
   }
 
-  return $result;
+  // https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-s3-2006-03-01.html#deleteobject
+  public function DeleteObject($bucket, $key, $api_parameters)
+  {
+    try {
+      $result = $this->$s3client->deleteObject([
+        'Bucket' => $bucket,
+        'Key'    => $key,
+      ]);
+    } catch (S3Exception $e) {
+      echo $e->getMessage() . PHP_EOL;
+    }
+
+    return $result;
+  }
 }
 
 
@@ -97,45 +121,33 @@ function main()
     exit;
   }
 
-  $api         = $args['api'];
-  $bucket      = $args['bucket'];
-  $region      = $args['region'] ?: 'us-east-1';
-  $endpoint    = $args['endpoint'] ?: 'https://s3.amazonaws.com/';
-  $acl         = $args['acl'] ?: 'private';
-  $key         = $args['key'];
-  $save_as     = $args['save_as'];
-  $source_file = $args['source_file'];
-  $copy_source = $args['copy_source'];
+  $aws_access_key_id     = getenv('AWS_ACCESS_KEY_ID');
+  $aws_secret_access_key = getenv('AWS_SECRET_ACCESS_KEY');
+  $region                = $args['region'] ?: 'us-east-1';
+  $endpoint              = $args['endpoint'] ?: 'https://s3.amazonaws.com/';
+  $api                   = $args['api'];
+
+  $bucket                       = $args['bucket'];
+  $key                          = $args['key'];
+  $api_parameters['ACL']        = $args['acl'] ?: 'private';
+  $api_parameters['SaveAs']     = $args['save_as'];
+  $api_parameters['SourceFile'] = $args['source_file'];
+  $api_parameters['CopySource'] = $args['copy_source'];
   
-  $options = [
-      'credentials' => [
-          'key'    => getenv('AWS_ACCESS_KEY_ID'),
-          'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
-      ],
-      'region'   => $region,
-      'endpoint' => $endpoint,
-      'version'  => 'latest',
-  ];
- 
-  // S3Clientを実行するとこんなWarningが3回くらい流れるので意図的に抑止
-  // Warning: syntax error, unexpected '(' in Unknown on line 6
-  // in /path/to/s3-mini-cli-php/vendor/aws/aws-sdk-php/src/functions.php on line 461
-  error_reporting(0); 
-  $s3client = new S3Client($options);
-  error_reporting(1); 
+  $s3api = new S3API($aws_access_key_id, $aws_secret_access_key, $region, $endpoint);
 
   switch($api)
   {
     case "GetObject":
-      $result = GetObject($s3client, $bucket, $key, $save_as);
+      $result = $s3api->GetObject($bucket, $key, $api_parameters);
       break;
 
     case "PutObject":
-      $result = PutObject($s3client, $acl, $bucket, $key, $source_file);
+      $result = $s3api->PutObject($bucket, $key, $api_parameters);
       break;
 
     case "DeleteObject":
-      $result = DeleteObject($s3client, $bucket, $key);
+      $result = $s3api->DeleteObject($bucket, $key, $api_parameters);
       break;
 
     default:
