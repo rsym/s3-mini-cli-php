@@ -22,6 +22,7 @@ function GetObject($s3client, $bucket, $key, $save_as)
 }
 
 
+// https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-s3-2006-03-01.html#putobject
 function PutObject($s3client, $bucket, $key, $source_file)
 {
   try { 
@@ -38,6 +39,7 @@ function PutObject($s3client, $bucket, $key, $source_file)
 }
 
 
+// https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-s3-2006-03-01.html#deleteobject
 function DeleteObject($s3client, $bucket, $key)
 {
   try { 
