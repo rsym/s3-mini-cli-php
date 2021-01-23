@@ -23,10 +23,11 @@ function GetObject($s3client, $bucket, $key, $save_as)
 
 
 // https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-s3-2006-03-01.html#putobject
-function PutObject($s3client, $bucket, $key, $source_file)
+function PutObject($s3client, $acl, $bucket, $key, $source_file)
 {
   try { 
     $result = $s3client->putObject([
+      'ACL'        => $acl,
       'Bucket'     => $bucket,
       'Key'        => $key,
       'SourceFile' => $source_file,
@@ -64,6 +65,7 @@ OPTIONS:
   --usage
   --region (default : us-east-1)
   --endpoint (default : https://s3.amazonaws.com/)
+  --acl (default : private)
   --save_as
   --source_file
   --copy_source
@@ -81,6 +83,7 @@ function main()
     "bucket:",
     "region:",
     "endpoint:",
+    "acl:",
     "key:",
     "save_as:",
     "source_file:",
@@ -99,6 +102,7 @@ function main()
   $bucket      = $args['bucket'];
   $region      = $args['region'] ?: 'us-east-1';
   $endpoint    = $args['endpoint'] ?: 'https://s3.amazonaws.com/';
+  $acl         = $args['acl'] ?: 'private';
   $key         = $args['key'];
   $save_as     = $args['save_as'];
   $source_file = $args['source_file'];
@@ -128,7 +132,7 @@ function main()
       break;
 
     case "PutObject":
-      $result = PutObject($s3client, $bucket, $key, $source_file);
+      $result = PutObject($s3client, $acl, $bucket, $key, $source_file);
       break;
 
     case "DeleteObject":
