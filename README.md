@@ -38,6 +38,18 @@ AWS_SECRET_ACCESS_KEY='***********************'
 
 現時点で利用できるのは `GetObject`/`PutObject`/`DeleteObject`の3つだけです。
 
+```
+Usage: php s3-mini-cli.php --api GetObject|PutObject|DeleteObject --bucket BUCKET --key PATH/TO/KEY [OPTIONS]
+
+OPTIONS:
+  --usage
+  --region (default : us-east-1)
+  --endpoint (default : https://s3.amazonaws.com/)
+  --save_as
+  --source_file
+  --copy_source
+```
+
 #### GetObjectの実行例
 
 ```

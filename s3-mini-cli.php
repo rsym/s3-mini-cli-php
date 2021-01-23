@@ -53,6 +53,24 @@ function DeleteObject($s3client, $bucket, $key)
 }
 
 
+function usage()
+{
+  $messages = <<< EOM
+Usage: php s3-mini-cli.php --api GetObject|PutObject|DeleteObject --bucket BUCKET --key PATH/TO/KEY [OPTIONS]
+
+OPTIONS:
+  --usage
+  --region (default : us-east-1)
+  --endpoint (default : https://s3.amazonaws.com/)
+  --save_as
+  --source_file
+  --copy_source
+EOM;
+
+  printf("%s\n", $messages);
+}
+
+
 function main()
 {
   $longopts = array(
@@ -67,6 +85,12 @@ function main()
     "copy_source:",
   );
   $args = getopt(null, $longopts);
+
+  if ( !$args['usage'] )
+  {
+    usage();
+    exit;
+  }
 
   $usage       = $args['usage'];
   $api         = $args['api'];
@@ -110,6 +134,7 @@ function main()
       break;
 
     default:
+      usage();
       break;
   }
 
