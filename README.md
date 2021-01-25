@@ -14,11 +14,11 @@ php composer-setup.php
 php -r "unlink('composer-setup.php');"
 ```
 
-#### 2. aws-sdkのインストール
+#### 2. 必要なライブラリのインストール
 
-composerを利用してaws-sdkをインストールしてください。
+composerを利用して必要なライブラリをインストールしてください。
 ```
-./composer.phar require aws/aws-sdk-php
+./composer.phar install
 ```
 
 #### 3. アクセスキーを環境変数に設定する
