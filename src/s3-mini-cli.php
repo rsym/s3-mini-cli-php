@@ -1,5 +1,6 @@
 <?php
 require 'S3api.php';
+require 'vendor/autoload.php';
 
 main();
 
@@ -44,8 +45,11 @@ function main()
     exit;
   }
 
-  $aws_access_key_id     = getenv('AWS_ACCESS_KEY_ID');
-  $aws_secret_access_key = getenv('AWS_SECRET_ACCESS_KEY');
+  $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+  $dotenv->load();
+
+  $aws_access_key_id     = $_ENV['AWS_ACCESS_KEY_ID'];
+  $aws_secret_access_key = $_ENV['AWS_SECRET_ACCESS_KEY'];
   $region                = $args['region'] ?: 'us-east-1';
   $endpoint              = $args['endpoint'] ?: 'https://s3.amazonaws.com/';
   $api                   = $args['api'];
@@ -56,7 +60,7 @@ function main()
   $api_parameters['SaveAs']     = $args['save_as'];
   $api_parameters['SourceFile'] = $args['source_file'];
   $api_parameters['CopySource'] = $args['copy_source'];
-  
+
   $s3api = new S3api($aws_access_key_id, $aws_secret_access_key, $region, $endpoint);
 
   switch($api)
