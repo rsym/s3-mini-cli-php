@@ -75,5 +75,22 @@ class S3api
 
     return $result;
   }
+
+  // https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-s3-2006-03-01.html#copyobject
+  public function CopyObject($bucket, $key, $api_parameters)
+  {
+    try {
+      $result = $this->$s3client->copyObject([
+        'Bucket'     => $bucket,
+        'Key'        => $key,
+        'CopySource' => $api_parameters['CopySource'],
+        'ACL'        => $api_parameters['ACL'],
+      ]);
+    } catch (S3Exception $e) {
+      echo $e->getMessage() . PHP_EOL;
+    }
+
+    return $result;
+  }
 }
 

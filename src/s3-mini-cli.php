@@ -6,7 +6,7 @@ main();
 function usage()
 {
   $messages = <<< EOM
-Usage: ./s3-mini-cli --api GetObject|PutObject|DeleteObject --bucket BUCKET --key PATH/TO/KEY [OPTIONS]
+Usage: ./s3-mini-cli --api GetObject|PutObject|DeleteObject|CopyObject --bucket BUCKET --key PATH/TO/KEY [OPTIONS]
 
 OPTIONS:
   --usage
@@ -15,6 +15,7 @@ OPTIONS:
   --acl (default : private)
   --save_as
   --source_file
+  --copy_source
 EOM;
 
   printf("%s\n", $messages);
@@ -33,6 +34,7 @@ function main()
     "key:",
     "save_as:",
     "source_file:",
+    "copy_source:",
   );
   $args = getopt(null, $longopts);
 
@@ -53,6 +55,7 @@ function main()
   $api_parameters['ACL']        = $args['acl'] ?: 'private';
   $api_parameters['SaveAs']     = $args['save_as'];
   $api_parameters['SourceFile'] = $args['source_file'];
+  $api_parameters['CopySource'] = $args['copy_source'];
   
   $s3api = new S3api($aws_access_key_id, $aws_secret_access_key, $region, $endpoint);
 
@@ -68,6 +71,10 @@ function main()
 
     case "DeleteObject":
       $result = $s3api->DeleteObject($bucket, $key, $api_parameters);
+      break;
+
+    case "CopyObject":
+      $result = $s3api->CopyObject($bucket, $key, $api_parameters);
       break;
 
     default:

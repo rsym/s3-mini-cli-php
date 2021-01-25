@@ -36,17 +36,19 @@ AWS_SECRET_ACCESS_KEY='***********************'
 
 ### USAGE
 
-現時点で利用できるのは `GetObject`/`PutObject`/`DeleteObject`の3つだけです。
+現時点で利用できるのは `GetObject`/`PutObject`/`DeleteObject`/`CopyObject`の4つだけです。
 
 ```
-Usage: ./s3-mini-cli --api GetObject|PutObject|DeleteObject --bucket BUCKET --key PATH/TO/KEY [OPTIONS]
+Usage: ./s3-mini-cli --api GetObject|PutObject|DeleteObject|CopyObject --bucket BUCKET --key PATH/TO/KEY [OPTIONS]
 
 OPTIONS:
   --usage
   --region (default : us-east-1)
   --endpoint (default : https://s3.amazonaws.com/)
+  --acl (default : private)
   --save_as
   --source_file
+  --copy_source
 ```
 
 #### GetObjectの実行例
